@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private String[] Text=new String[4];
     private ListView listView;
-
+    private int listcount1;
     //初始化openCV库
     private void iniLoadOpenCV(){
         boolean success = OpenCVLoader.initDebug();
@@ -84,8 +84,9 @@ public class MainActivity extends AppCompatActivity  {
                 Intent ocr_intent = new Intent();
                 ocr_intent.setClass(MainActivity.this,ocrFullShow.class);
                 ocr_intent.putExtra("data",data);
+                ocr_intent.putExtra("index",position+1);
                 startActivity(ocr_intent);
-
+//                MainActivity.this.finish();
             }
         });
 
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity  {
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, CaptureActivity.class);
             startActivity(intent);
+//            MainActivity.this.finish();
             }
         });
 
@@ -127,10 +129,26 @@ public class MainActivity extends AppCompatActivity  {
         DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp",null,1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("bp",null,null,null,null,null,null);
-        Log.i("appTest:","databases size:"+cursor.getCount());
+        listcount1 = cursor.getCount();
+        Log.i("appTest:","databases size:"+listcount1);
         while(cursor.moveToNext()){
             data[0] = cursor.getString(7); //time
             data[1] = cursor.getString(5); //bitmap uri
+            Log.i("appTest:","search data:"+data[0]+" "+data[1]);
+            Uri imageUri = Uri.parse(data[1]);
+            Bitmap bitmap = getBitmapFromUri(imageUri);
+            bpItem bpItem = new bpItem(data[0],bitmap);
+            bpItems.add(bpItem);
+        }
+        cursor.close();
+
+        DocDataBaseHelper dbDocHelper = new DocDataBaseHelper(MainActivity.this, "ocr_doc",null,1);
+        SQLiteDatabase db_doc = dbDocHelper.getWritableDatabase();
+        Cursor cursor_doc = db_doc.query("doc",null,null,null,null,null,null);
+        Log.i("appTest:","doc databases size:"+cursor_doc.getCount());
+        while(cursor_doc.moveToNext()){
+            data[0] = cursor_doc.getString(4); //time
+            data[1] = cursor_doc.getString(2); //bitmap uri
             Log.i("appTest:","search data:"+data[0]+" "+data[1]);
             Uri imageUri = Uri.parse(data[1]);
             Bitmap bitmap = getBitmapFromUri(imageUri);
@@ -142,9 +160,17 @@ public class MainActivity extends AppCompatActivity  {
 
     private String[] getData(int index){
         String[] data = new String[8];
-        DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp",null,1);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("bp",null,null,null,null,null,null);
+        Cursor cursor;
+        if(index <= listcount1) {
+            DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp", null, 1);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            cursor = db.query("bp", null, null, null, null, null, null);
+        }else{
+            DocDataBaseHelper dbHelper = new DocDataBaseHelper(MainActivity.this, "ocr_doc", null, 1);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            cursor = db.query("bp", null, null, null, null, null, null);
+            index = index - listcount1;
+        }
         if(cursor.moveToFirst()) {
             if (index < cursor.getCount()){
                 cursor.move(index);

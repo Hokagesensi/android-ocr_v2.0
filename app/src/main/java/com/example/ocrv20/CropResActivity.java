@@ -39,6 +39,8 @@ public class CropResActivity  extends AppCompatActivity {
                         +",width:"+bitmap.getWidth());
                 Intent intent = new Intent(CropResActivity.this,CropTinyActivity.class);
                 startActivity(intent);
+                CropResActivity.this.finish();
+
 
             }
         });

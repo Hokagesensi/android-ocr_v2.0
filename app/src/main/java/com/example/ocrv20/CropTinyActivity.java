@@ -2,8 +2,10 @@ package com.example.ocrv20;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.util.ChineseCalendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,8 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
+import com.googlecode.tesseract.android.TessBaseAPI;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -25,6 +29,9 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public class CropTinyActivity extends AppCompatActivity{
@@ -35,9 +42,13 @@ public class CropTinyActivity extends AppCompatActivity{
     private Button btn_cut;
     private Button btn_back;
     private Button btn_ocr;
+    private Button btn_DocOcr;
     private ImageView cropImageView;
 
     public Uri finalBitmapUri;
+    private TessBaseAPI baseApi;
+    private boolean success=false;
+    public String text;
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_croptiny);
@@ -45,6 +56,7 @@ public class CropTinyActivity extends AppCompatActivity{
             btn_ocr = findViewById(R.id.btn_ocr);
             btn_cut = findViewById(R.id.btn_cut);
             btn_back = findViewById(R.id.btn_back);
+            btn_DocOcr = findViewById(R.id.btn_DocOcr);
             cropImageView = findViewById(R.id.imageCrop);
 
             photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
@@ -74,6 +86,28 @@ public class CropTinyActivity extends AppCompatActivity{
                     intent.putExtra("bitmapUri",finalBitmapUri.toString());
                     Log.i("appTest","res.length="+res.length);
                     CropTinyActivity.this.startActivity(intent);
+                    CropTinyActivity.this.finish();
+                }
+            });
+            //文本识别
+            btn_DocOcr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!success) {
+                        try {
+                            initTessBaseAPI();
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                    }
+                    text = recognizeTextImage(bitmap);
+                    Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
+//                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
+
+                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
+                    doc_ocr_intent.putExtra("text",text);
+                    doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
+                    startActivity(doc_ocr_intent);
                 }
             });
 
@@ -173,5 +207,37 @@ public class CropTinyActivity extends AppCompatActivity{
         }
     }
 
+    private void initTessBaseAPI() throws IOException {
+        baseApi = new TessBaseAPI();
+        String datapath = Environment.getExternalStorageDirectory()+"/tesseract/";
+        File dir = new File(datapath + "tessdata/");
+        if(!dir.exists()){
+            dir.mkdirs();
+            InputStream input = getResources().openRawResource(R.raw.chi_sim);
+            File file = new File(dir,"chi_sim.traineddata");
+            FileOutputStream output = new FileOutputStream(file);
+            byte[] buff = new byte[1024];
+            int len=0;
+            while((len=input.read(buff))!=-1){
+                output.write(buff,0,len);
+            }
+            input.close();
+            output.close();
+        }
+        success = baseApi.init(datapath, "chi_sim");
+        if(success){
+            Log.i("appTest:","load Tesseract ocr Engine successfully...");
+        }else{
+            Log.i("appTest:","Warnning: could not initialize Tesseract data...");
+        }
+    }
+
+    private  String recognizeTextImage(Bitmap img){
+//        Resources r = CropTinyActivity.this.getResources();
+//        Bitmap img2 = BitmapFactory.decodeResource(r,R.drawable.apptest01);
+        baseApi.setImage(img);
+        String recognizeText = baseApi.getUTF8Text();
+        return recognizeText;
+    }
 
 }

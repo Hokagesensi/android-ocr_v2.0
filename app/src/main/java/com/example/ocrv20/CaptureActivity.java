@@ -261,7 +261,7 @@ public class CaptureActivity extends AppCompatActivity {
             bundle.putString("url",imagePath);
             countour_intent.putExtras(bundle);
             startActivityForResult(countour_intent,2);
-
+            CaptureActivity.this.finish();
         } else {
             Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
         }

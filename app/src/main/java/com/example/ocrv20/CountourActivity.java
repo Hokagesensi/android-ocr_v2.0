@@ -149,11 +149,11 @@ public class CountourActivity extends AppCompatActivity {
         Mat dst = ImgPreProcess.RotateRightImg(src,code);
 
 
-        Mat dst2 = ImgPreProcess.AdjustImgSize(dst);
+//        Mat dst2 = ImgPreProcess.AdjustImgSize(dst);
         bitmap = Bitmap.createBitmap(
-                dst2.cols(), dst2.rows(),
+                dst.cols(), dst.rows(),
                 Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(dst2, bitmap);
+        Utils.matToBitmap(dst, bitmap);
         ivCrop.setImageToCrop(bitmap);
     }
 
@@ -169,6 +169,7 @@ public class CountourActivity extends AppCompatActivity {
             fos.close();
             Intent intent = new Intent(CountourActivity.this,CropResActivity.class);
             startActivity(intent);
+            CountourActivity.this.finish();
 
         } catch (IOException e) {
             e.printStackTrace();

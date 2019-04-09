@@ -86,6 +86,7 @@ public class ocrResultActivity extends AppCompatActivity {
                 Intent main_intent = new Intent();
                 main_intent.setClass(ocrResultActivity.this,MainActivity.class);
                 startActivity(main_intent);
+                ocrResultActivity.this.finish();
             }
         });
 

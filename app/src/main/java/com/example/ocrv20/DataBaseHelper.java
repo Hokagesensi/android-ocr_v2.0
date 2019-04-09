@@ -13,7 +13,7 @@ public class DataBaseHelper  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //创建数据库sql语句 并 执行
-        String sql = "create table bp(typeInfo varchar(10),userid varchar(20),highBP varchar(20),lowBP varcahr(20),hr varchar(20),bitmap varchar(100),comment varchar(100),time varchar(100))";
+        String sql = "create table bp(id integer primary key autoincrement,typeInfo varchar(10),highBP varchar(20),lowBP varcahr(20),hr varchar(20),bitmap varchar(100),comment varchar(100),time varchar(100))";
         db.execSQL(sql);
     }
     @Override

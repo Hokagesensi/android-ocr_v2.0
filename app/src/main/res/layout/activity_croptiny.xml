@@ -37,11 +37,17 @@
             android:layout_weight="1"
             android:text="裁剪"/>
         <Button
+            android:id="@+id/btn_DocOcr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="文档ocr"/>
+        <Button
             android:id="@id/btn_ocr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="识别"/>
+            android:text="血压ocr"/>
 
     </LinearLayout>
 

@@ -46,6 +46,7 @@
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ocrResultActivity">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT"/>
@@ -53,6 +54,7 @@
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ocrFullShow" >
             <intent-filter>
                 <action android:name="android.intent.action.EDIT"/>
@@ -60,6 +62,15 @@
                 <category android:name="android.intent.category.ALTERNATIVE"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".docOcrActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="sensorPortrait"
