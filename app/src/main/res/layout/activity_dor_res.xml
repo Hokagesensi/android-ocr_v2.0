@@ -34,7 +34,7 @@
             android:padding="10dp"
             android:text="备注"/>
         <EditText
-            android:id="@+id/edit_text_comment"
+            android:id="@+id/edit_text_comment1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"/>

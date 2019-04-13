@@ -26,7 +26,7 @@ public class docOcrActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dor_res);
 
         edit_text = findViewById(R.id.edit_text);
-        edit_text_comment = findViewById(R.id.edit_text_comment);
+        edit_text_comment = findViewById(R.id.edit_text_comment1);
         btn_doc_save = findViewById(R.id.btn_doc_save);
 
         Intent intent = getIntent();
