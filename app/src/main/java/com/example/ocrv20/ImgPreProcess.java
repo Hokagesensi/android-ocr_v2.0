@@ -39,6 +39,18 @@ public class ImgPreProcess {
         return dst;
     }
 
+    public static Mat AdjustImgSize2(Mat src,int newHeight){
+        double nHeight = src.rows(),nWidth=src.cols();
+        Mat dst=new Mat();
+        double fx,fy;
+        fy = newHeight/nHeight;
+        fx = newHeight/nHeight;
+        Size dsize = new Size(Math.round(fx*nWidth),Math.round(fy*nHeight));
+        Imgproc.resize(src,dst,dsize,fx,fy,Imgproc.INTER_NEAREST);
+        return dst;
+    }
+
+
 
     /*
      *图像灰度化，阈值化处理

@@ -13,7 +13,7 @@ public class DocDataBaseHelper  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //创建数据库sql语句 并 执行
-        String sql = "create table doc(id integer primary key autoincrement,text varchar(1024), bitmap varchar(100),comment varchar(100),time varchar(100))";
+        String sql = "create table doc(id integer primary key autoincrement,typeInfo varchar(10),text varchar(1024), bitmap varchar(100),comment varchar(100),time varchar(100))";
         db.execSQL(sql);
     }
     @Override

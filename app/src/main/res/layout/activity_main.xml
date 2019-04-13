@@ -12,14 +12,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/listView"
+        <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="血压计数据"
+            android:id="@+id/btn_bpData_main"/>
 
-        </ListView>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="文档识别数据"
+            android:id="@+id/btn_ocrData_main"/>
 
     </LinearLayout>
 

@@ -183,7 +183,7 @@ public class CaptureActivity extends AppCompatActivity {
                         bundle.putInt("key",1);
                         bundle.putString("url",imageUri.toString());
                         countour_intent.putExtras(bundle);
-                        startActivityForResult(countour_intent,1);
+                        startActivityForResult(countour_intent,3);
 //                        Log.i("appTest:拍照转换activity:",imageUri.toString());
 //                    } catch (FileNotFoundException e) {
 //                        e.printStackTrace();
@@ -202,8 +202,13 @@ public class CaptureActivity extends AppCompatActivity {
                     }
                 }
                 break;
+            case 3:
+                if(resultCode==RESULT_OK){
+                    CaptureActivity.this.finish();
+                }
             default:
                 break;
+
         }
     }
 
@@ -260,8 +265,8 @@ public class CaptureActivity extends AppCompatActivity {
             bundle.putInt("key",2);
             bundle.putString("url",imagePath);
             countour_intent.putExtras(bundle);
-            startActivityForResult(countour_intent,2);
-            CaptureActivity.this.finish();
+            startActivityForResult(countour_intent,3);
+//            CaptureActivity.this.finish();
         } else {
             Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
         }

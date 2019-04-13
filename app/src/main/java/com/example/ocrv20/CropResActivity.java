@@ -38,16 +38,25 @@ public class CropResActivity  extends AppCompatActivity {
                 Log.i("appTest:","cropped size:height"+bitmap.getHeight()
                         +",width:"+bitmap.getWidth());
                 Intent intent = new Intent(CropResActivity.this,CropTinyActivity.class);
-                startActivity(intent);
-                CropResActivity.this.finish();
-
-
+                startActivityForResult(intent,1);
             }
         });
 
 
 
 
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==RESULT_OK){
+            Intent main_intent = new Intent();
+            main_intent.putExtra("result","update");
+            CropResActivity.this.setResult(RESULT_OK,main_intent);
+            CropResActivity.this.finish();
+        }
     }
 
 

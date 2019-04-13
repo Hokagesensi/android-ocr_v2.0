@@ -71,6 +71,30 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ocrHistoryDataListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".docHistoryDataListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".docFullShow">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="sensorPortrait"

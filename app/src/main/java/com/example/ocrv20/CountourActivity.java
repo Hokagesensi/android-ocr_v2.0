@@ -168,8 +168,8 @@ public class CountourActivity extends AppCompatActivity {
             fos.flush();
             fos.close();
             Intent intent = new Intent(CountourActivity.this,CropResActivity.class);
-            startActivity(intent);
-            CountourActivity.this.finish();
+            startActivityForResult(intent,1);
+//            CountourActivity.this.finish();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,8 +177,15 @@ public class CountourActivity extends AppCompatActivity {
     }
 
 
-
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==RESULT_OK){
+            Intent main_intent = new Intent();
+            main_intent.putExtra("result","update");
+            CountourActivity.this.setResult(RESULT_OK,main_intent);
+            CountourActivity.this.finish();
+        }
+    }
 
 
 

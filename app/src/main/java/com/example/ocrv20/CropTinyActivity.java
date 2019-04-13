@@ -49,83 +49,92 @@ public class CropTinyActivity extends AppCompatActivity{
     private TessBaseAPI baseApi;
     private boolean success=false;
     public String text;
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_croptiny);
+    private int ocr_result_ok = 233;
+    private int doc_result_ok = 777;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_croptiny);
 
-            btn_ocr = findViewById(R.id.btn_ocr);
-            btn_cut = findViewById(R.id.btn_cut);
-            btn_back = findViewById(R.id.btn_back);
-            btn_DocOcr = findViewById(R.id.btn_DocOcr);
-            cropImageView = findViewById(R.id.imageCrop);
+        btn_ocr = findViewById(R.id.btn_ocr);
+        btn_cut = findViewById(R.id.btn_cut);
+        btn_back = findViewById(R.id.btn_back);
+        btn_DocOcr = findViewById(R.id.btn_DocOcr);
+        cropImageView = findViewById(R.id.imageCrop);
 
-            photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
-            finalBitmapUri = Uri.parse(photoFile.getPath());
-            if(photoFile.exists()) {
-                bitmap = BitmapFactory.decodeFile(photoFile.getPath());
-                Log.i("appTest:cropTinyActivity","bitmap大小:"+bitmap.getWidth()+","+bitmap.getHeight());
-                cropImageView.setImageBitmap(bitmap);
+        photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
+        finalBitmapUri = Uri.parse(photoFile.getPath());
+        if(photoFile.exists()) {
+            bitmap = BitmapFactory.decodeFile(photoFile.getPath());
+            Log.i("appTest:cropTinyActivity","bitmap大小:"+bitmap.getWidth()+","+bitmap.getHeight());
+            cropImageView.setImageBitmap(bitmap);
+        }
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CropTinyActivity.this.finish();
             }
+        });
 
-            btn_cut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startUCrop(CropTinyActivity.this,photoFile.toString(),UCrop.REQUEST_CROP,0,0);
-                }
-            });
+        btn_cut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startUCrop(CropTinyActivity.this,photoFile.toString(),UCrop.REQUEST_CROP,0,0);
+            }
+        });
 
-            btn_ocr.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int[] res = ocr(bitmap);
-                    Log.i("appTest:","开始启动结果显示");
-                    Intent intent = new Intent(CropTinyActivity.this,ocrResultActivity.class);
-                    intent.putExtra("hp",String.valueOf(res[0]));
-                    intent.putExtra("lp",String.valueOf(res[1]));
-                    intent.putExtra("hr",String.valueOf(res[2]));
-                    intent.putExtra("bitmapUri",finalBitmapUri.toString());
-                    Log.i("appTest","res.length="+res.length);
-                    CropTinyActivity.this.startActivity(intent);
-                    CropTinyActivity.this.finish();
-                }
-            });
-            //文本识别
-            btn_DocOcr.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!success) {
-                        try {
-                            initTessBaseAPI();
-                        } catch (IOException ioe) {
-                            ioe.printStackTrace();
-                        }
+        btn_ocr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int[] res = ocr(bitmap);
+                Log.i("appTest:","开始启动结果显示");
+                Intent intent = new Intent(CropTinyActivity.this,ocrResultActivity.class);
+                intent.putExtra("hp",String.valueOf(res[0]));
+                intent.putExtra("lp",String.valueOf(res[1]));
+                intent.putExtra("hr",String.valueOf(res[2]));
+                intent.putExtra("bitmapUri",finalBitmapUri.toString());
+                Log.i("appTest","res.length="+res.length);
+                startActivityForResult(intent,1);
+//                    CropTinyActivity.this.finish();
+            }
+        });
+        //文本识别
+        btn_DocOcr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!success) {
+                    try {
+                        initTessBaseAPI();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
                     }
-                    text = recognizeTextImage(bitmap);
-                    Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
+                }
+                text = recognizeTextImage(bitmap);
+                Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
 //                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
 
-                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
-                    doc_ocr_intent.putExtra("text",text);
-                    doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
-                    startActivity(doc_ocr_intent);
-                }
-            });
-
-        }
-
-        public int[] ocr(Bitmap bitmap){
-            Log.i("appTest:","ocr bitmap size:"+bitmap.getHeight());
-            Mat img = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC4);
-            Utils.bitmapToMat(bitmap,img);
-            Log.i("appTest:finalImgSize:","width:"+img.width()+",height:"+img.height());
-            int[] number = ImgPreProcess.preprocess(img);
-            Log.i("appTest","ocr结果行数"+number.length);
-            for(int i=0;i<number.length;i++){
-                if(number[i]!=0)
-                Log.i("appTest:","第"+i+"行："+number[i]);
+                Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
+                doc_ocr_intent.putExtra("text",text);
+                doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
+                startActivityForResult(doc_ocr_intent,2);
             }
-            return number;
+        });
+
+    }
+
+    public int[] ocr(Bitmap bitmap){
+        Log.i("appTest:","ocr bitmap size:"+bitmap.getHeight());
+        Mat img = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC4);
+        Utils.bitmapToMat(bitmap,img);
+        Log.i("appTest:finalImgSize:","width:"+img.width()+",height:"+img.height());
+        int[] number = ImgPreProcess.preprocess(img);
+        Log.i("appTest","ocr结果行数"+number.length);
+        for(int i=0;i<number.length;i++){
+            if(number[i]!=0)
+            Log.i("appTest:","第"+i+"行："+number[i]);
         }
+        return number;
+    }
 
 
     /**
@@ -185,6 +194,10 @@ public class CropTinyActivity extends AppCompatActivity{
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
+        }else if(resultCode==ocr_result_ok||resultCode ==doc_result_ok) {
+                Intent cropResult_intent = new Intent();
+                CropTinyActivity.this.setResult(RESULT_OK, cropResult_intent);
+                CropTinyActivity.this.finish();
         }
     }
 

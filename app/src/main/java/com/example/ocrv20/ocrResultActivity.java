@@ -32,6 +32,7 @@ public class ocrResultActivity extends AppCompatActivity {
     private String time;
     public String[] text=new String[4];
     private String typeinfo = "bp_ocr";
+    private int ocr_result_ok = 233;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,12 +81,13 @@ public class ocrResultActivity extends AppCompatActivity {
                 values.put("bitmap",bitmapUri);
                 values.put("comment",text[3]);
                 values.put("time",time);
+                values.put("typeInfo","bp_ocr");
                 //数据库执行插入命令
                 db.insert("bp", null, values);
                 Log.i("appTest:","ocrResultActivity 插入数据到数据库："+time);
                 Intent main_intent = new Intent();
-                main_intent.setClass(ocrResultActivity.this,MainActivity.class);
-                startActivity(main_intent);
+                main_intent.putExtra("result","update");
+                ocrResultActivity.this.setResult(ocr_result_ok,main_intent);
                 ocrResultActivity.this.finish();
             }
         });

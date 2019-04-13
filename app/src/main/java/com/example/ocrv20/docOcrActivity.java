@@ -21,6 +21,7 @@ public class docOcrActivity extends AppCompatActivity {
 
     private String text;
     private String bitmapUri;
+    private int doc_result_ok = 777;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dor_res);
@@ -50,13 +51,14 @@ public class docOcrActivity extends AppCompatActivity {
                 values.put("bitmap",bitmapUri);
                 values.put("comment",comment);
                 values.put("time",time);
+                values.put("typeInfo","doc_ocr");
 
                 DocDataBaseHelper dbHelper = new DocDataBaseHelper(docOcrActivity.this, "ocr_doc",null,1);
                 SQLiteDatabase db_doc = dbHelper.getWritableDatabase();
                 db_doc.insert("doc", null, values);
-                Intent main_intent = new Intent(docOcrActivity.this,MainActivity.class);
-                startActivity(main_intent);
-
+                Intent main_intent = new Intent();
+                docOcrActivity.this.setResult(doc_result_ok,main_intent);
+                docOcrActivity.this.finish();
             }
         });
 

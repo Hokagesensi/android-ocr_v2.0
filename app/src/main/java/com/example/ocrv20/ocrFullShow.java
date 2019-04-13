@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,10 +20,10 @@ public class ocrFullShow extends AppCompatActivity {
     private int index;
 
     private ImageView imageView;
-    private TextView text_hp;
-    private TextView text_lp;
-    private TextView text_hr;
-    private TextView text_comment;
+    private EditText text_hp;
+    private EditText text_lp;
+    private EditText text_hr;
+    private EditText text_comment;
     private TextView text_time;
 
     private Button btn_delete;
@@ -40,7 +41,7 @@ public class ocrFullShow extends AppCompatActivity {
         text_comment = findViewById(R.id.ocr_comment);
         text_time = findViewById(R.id.ocr_time);
 
-        btn_edit = findViewById(R.id.btn_edit);
+        btn_edit = findViewById(R.id.btn_ocr_sava);
         btn_delete = findViewById(R.id.btn_delete);
 
         Intent intent= getIntent();
@@ -60,31 +61,40 @@ public class ocrFullShow extends AppCompatActivity {
         text_comment.setText(data[6]);
         text_time.setText(data[7]);
 
-        //编辑数据
+        //保存数据
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("appTest","点击删除按钮");
+                Log.i("appTest","点击保存按钮");
+                String[] newData = new String[4];
+                newData[0] = text_hp.getText().toString();
+                newData[1] = text_lp.getText().toString();
+                newData[2] = text_hr.getText().toString();
+                newData[3] = text_comment.getText().toString();
+                Log.i("appTest:","更改条目："+data[5]);
+                updateData(newData);
+                Intent docHistoryList_intent = new Intent();
+                docHistoryList_intent.putExtra("result","update");
+                ocrFullShow.this.setResult(RESULT_OK,docHistoryList_intent);
+                ocrFullShow.this.finish();
 
             }
         });
 
-        //修改当前数据
+        //删除当前数据
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                   index = Integer.parseInt(data[0]);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                Log.i("appTest:","删除条目"+data[0]+" "+index);
-                deleteData(index);
+                Log.i("appTest:","删除条目:"+data[7]);
+                deleteData(data[7]);
+                Intent docHistoryList_intent = new Intent();
+                docHistoryList_intent.putExtra("result","update");
+                ocrFullShow.this.setResult(RESULT_OK,docHistoryList_intent);
                 ocrFullShow.this.finish();
-                Intent intent1 = new Intent(ocrFullShow.this,MainActivity.class);
-                startActivity(intent1);
+
             }
         });
+
 
     }
 
@@ -102,11 +112,22 @@ public class ocrFullShow extends AppCompatActivity {
     }
 
         //删除数据
-    public void deleteData ( int index){
+    public void deleteData (String index){
         DataBaseHelper dbHelper = new DataBaseHelper(ocrFullShow.this, "ocr_bp", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Log.i("appTest:","开始删除条目："+index);
-        db.execSQL("delete from bp where id=?", new Object[]{index});
+        db.execSQL("delete from bp where time=?", new Object[]{index});
+        db.close();
+    }
+
+    //更改数据
+    public void updateData(String data[]){
+        DataBaseHelper dbHelper = new DataBaseHelper(ocrFullShow.this, "ocr_bp", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("update bp set highBP =? where time=?",new Object[]{data[0],this.data[7]});
+        db.execSQL("update bp set lowBP =? where time=?",new Object[]{data[1],this.data[7]});
+        db.execSQL("update bp set hr =? where time=?",new Object[]{data[2],this.data[7]});
+        db.execSQL("update bp set comment =? where time=?",new Object[]{data[3],this.data[7]});
         db.close();
     }
 

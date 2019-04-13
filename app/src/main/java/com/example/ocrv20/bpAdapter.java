@@ -22,10 +22,12 @@ public class bpAdapter extends ArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         bpItem bp = (bpItem) getItem(position); // 获取当前项的Fruit实例
         View view = LayoutInflater.from(getContext()).inflate(resourceId, null);//实例化一个对象
-        ImageView fruitImage = (ImageView) view.findViewById(R.id.bp_image);//获取该布局内的图片视图
-        TextView fruitName = (TextView) view.findViewById(R.id.bp_time);//获取该布局内的文本视图
-        fruitImage.setImageBitmap(bp.getBitmap());//为图片视图设置图片资源
-        fruitName.setText(bp.getTime());//为文本视图设置文本内容
+        ImageView ocrImage = (ImageView) view.findViewById(R.id.bp_image);//获取该布局内的图片视图
+        TextView ocrTime = (TextView) view.findViewById(R.id.bp_time);//获取该布局内的文本视图
+        TextView ocrType = (TextView) view.findViewById(R.id.bp_type);
+        ocrImage.setImageBitmap(bp.getBitmap());//为图片视图设置图片资源
+        ocrTime.setText(bp.getTime());//为文本视图设置文本内容
+        ocrType.setText(bp.getTypeinfo());//设置类型
         return view;
     }
 

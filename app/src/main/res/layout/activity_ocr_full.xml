@@ -7,7 +7,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ImageView
             android:id="@+id/ocr_fullImage"
@@ -27,12 +28,13 @@
             android:layout_height="wrap_content"
             android:text="高压" />
 
-        <TextView
+        <EditText
             android:id="@+id/ocr_highbp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10" />
+            android:ems="10"
+            android:inputType="number"/>
 
     </LinearLayout>
 
@@ -48,11 +50,12 @@
             android:layout_height="wrap_content"
             android:text="低压" />
 
-        <TextView
+        <EditText
             android:id="@+id/ocr_lowbp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:inputType="number"/>
 
     </LinearLayout>
 
@@ -68,11 +71,12 @@
         android:layout_height="wrap_content"
         android:text="心率" />
 
-    <TextView
+    <EditText
         android:id="@+id/ocr_hr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:inputType="number"/>
 
 </LinearLayout>
 
@@ -89,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="备注" />
 
-        <TextView
+        <EditText
             android:id="@+id/ocr_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,11 +128,11 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btn_ocr_sava"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="编辑"
-            android:id="@+id/btn_edit"/>
+            android:text="保存" />
 
         <Button
             android:layout_width="0dp"

@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -65,30 +66,34 @@ public class MainActivity extends AppCompatActivity  {
         }
 
         FloatingActionButton processBtn = this.findViewById(R.id.newCapture);
-        searchData();
-        bpAdapter adapter = new bpAdapter(MainActivity.this,R.layout.bp_item,bpItems);
-        listView=findViewById(R.id.listView);
-        listView.setAdapter(adapter);
+        Button btn_ocrData_main = findViewById(R.id.btn_bpData_main);
+        Button btn_docData_main = findViewById(R.id.btn_ocrData_main);
+//        searchData();
+//        bpAdapter adapter = new bpAdapter(MainActivity.this,R.layout.bp_item,bpItems);
+//        listView=findViewById(R.id.listView);
+//        listView.setAdapter(adapter);
 
 
-        //设置listView监听事件
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("appTest:","点击"+position);
-                String[] data = new String[8];
-                data = getData(position);
-                Log.i("appTest: ", "listView choose from database--->" + position + " "
-                        + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " +
-                        data[5] + " " + data[6]+" "+data[7]);
-                Intent ocr_intent = new Intent();
-                ocr_intent.setClass(MainActivity.this,ocrFullShow.class);
-                ocr_intent.putExtra("data",data);
-                ocr_intent.putExtra("index",position+1);
-                startActivity(ocr_intent);
-//                MainActivity.this.finish();
-            }
-        });
+//        //设置listView监听事件
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Log.i("appTest:","点击"+position);
+//                bpItem bpitem = bpItems.get(position);
+//                Log.i("appTest:","点击条目的详细内容为："+"typeInfo:"+
+//                        bpitem.getTypeinfo()+",time:"+bpitem.getTime());
+//
+////                data = getData(position);
+////                Log.i("appTest: ", "listView choose from database--->" + position + " "
+////                        + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " +
+////                        data[5] + " " + data[6]+" "+data[7]);
+////                Intent ocr_intent = new Intent();
+////                ocr_intent.setClass(MainActivity.this,ocrFullShow.class);
+////                ocr_intent.putExtra("data",data);
+////                ocr_intent.putExtra("index",position+1);
+////                startActivity(ocr_intent);
+//            }
+//        });
 
 
         //设置按钮监听事件
@@ -100,6 +105,24 @@ public class MainActivity extends AppCompatActivity  {
             intent.setClass(MainActivity.this, CaptureActivity.class);
             startActivity(intent);
 //            MainActivity.this.finish();
+            }
+        });
+
+        //设置血压计数据回放按钮
+        btn_ocrData_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent ocr_intent = new Intent(MainActivity.this,ocrHistoryDataListActivity.class);
+                startActivity(ocr_intent);
+            }
+        });
+
+        //设置文档识别数据回放按钮
+        btn_docData_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent doc_intent = new Intent(MainActivity.this,docHistoryDataListActivity.class);
+                startActivity(doc_intent);
             }
         });
 
@@ -125,7 +148,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void searchData(){
-        String[] data = new String[2];
+        String[] data = new String[3];
         DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp",null,1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("bp",null,null,null,null,null,null);
@@ -134,10 +157,11 @@ public class MainActivity extends AppCompatActivity  {
         while(cursor.moveToNext()){
             data[0] = cursor.getString(7); //time
             data[1] = cursor.getString(5); //bitmap uri
-            Log.i("appTest:","search data:"+data[0]+" "+data[1]);
+            data[2] = cursor.getString(1); //typeInfo
+            Log.i("appTest:","search data:"+data[0]+" "+data[1]+" "+data[2]);
             Uri imageUri = Uri.parse(data[1]);
             Bitmap bitmap = getBitmapFromUri(imageUri);
-            bpItem bpItem = new bpItem(data[0],bitmap);
+            bpItem bpItem = new bpItem(data[0],bitmap,data[2]);
             bpItems.add(bpItem);
         }
         cursor.close();
@@ -147,12 +171,13 @@ public class MainActivity extends AppCompatActivity  {
         Cursor cursor_doc = db_doc.query("doc",null,null,null,null,null,null);
         Log.i("appTest:","doc databases size:"+cursor_doc.getCount());
         while(cursor_doc.moveToNext()){
-            data[0] = cursor_doc.getString(4); //time
-            data[1] = cursor_doc.getString(2); //bitmap uri
+            data[0] = cursor_doc.getString(5); //time
+            data[1] = cursor_doc.getString(3); //bitmap uri
+            data[2] = cursor_doc.getString(1);
             Log.i("appTest:","search data:"+data[0]+" "+data[1]);
             Uri imageUri = Uri.parse(data[1]);
             Bitmap bitmap = getBitmapFromUri(imageUri);
-            bpItem bpItem = new bpItem(data[0],bitmap);
+            bpItem bpItem = new bpItem(data[0],bitmap,data[2]);
             bpItems.add(bpItem);
         }
         cursor.close();
@@ -160,18 +185,17 @@ public class MainActivity extends AppCompatActivity  {
 
     private String[] getData(int index){
         String[] data = new String[8];
-        Cursor cursor;
-        if(index <= listcount1) {
-            DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp", null, 1);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            cursor = db.query("bp", null, null, null, null, null, null);
-        }else{
-            DocDataBaseHelper dbHelper = new DocDataBaseHelper(MainActivity.this, "ocr_doc", null, 1);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            cursor = db.query("bp", null, null, null, null, null, null);
+        DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this, "ocr_bp", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("bp", null, null, null, null, null, null);
+        listcount1 = cursor.getCount();
+        if(index >= listcount1) {
+            DocDataBaseHelper dbHelperdoc = new DocDataBaseHelper(MainActivity.this, "ocr_doc", null, 1);
+            SQLiteDatabase dbdoc = dbHelperdoc.getWritableDatabase();
+            cursor = dbdoc.query("bp", null, null, null, null, null, null);
             index = index - listcount1;
-        }
-        if(cursor.moveToFirst()) {
+
+        }else if(cursor.moveToFirst()){
             if (index < cursor.getCount()){
                 cursor.move(index);
                 for(int i=0;i<8;i++)
