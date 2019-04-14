@@ -29,11 +29,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="清空" />
+
         <Button
             android:id="@+id/btn_ocrDataPlot"
-            android:text="绘图"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_height="match_parent" />
+            android:text="绘图" />
     </LinearLayout>
 </LinearLayout>

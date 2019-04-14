@@ -20,8 +20,10 @@ import java.util.List;
 public class ocrHistoryDataListActivity extends AppCompatActivity {
 
     private List<bpItem> bpItems = new ArrayList<bpItem>();
+    private List<bpData> bpDatas = new ArrayList<bpData>();
     private ListView listView;
     private Button btn_ocr_delete_all;
+    private Button btn_ocr_plot;
     private bpAdapter adapter;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,7 @@ public class ocrHistoryDataListActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.ocr_data_list);
         btn_ocr_delete_all = findViewById(R.id.btn_ocrDataListDeleteAll);
+        btn_ocr_plot = findViewById(R.id.btn_ocrDataPlot);
         searchData();
         adapter = new bpAdapter(ocrHistoryDataListActivity.this,R.layout.bp_item,bpItems);
         listView.setAdapter(adapter);
@@ -43,11 +46,25 @@ public class ocrHistoryDataListActivity extends AppCompatActivity {
             }
         });
 
+        //清空所有
         btn_ocr_delete_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listView.setAdapter(null);
                 deleteDataAll();
+            }
+        });
+
+        //绘制历史数据折线图
+        btn_ocr_plot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("appTest:","开始绘制图像");
+                String[][] dataAll=getAllData();
+                Log.i("appTest:","获取数据数量："+dataAll.length);
+                for(int i=0;i<dataAll.length;i++)
+                    for(int j=0;j<dataAll[i].length;j++)
+                        Log.i("appTest:",j+":"+dataAll[i][j]);
             }
         });
 
@@ -104,10 +121,19 @@ public class ocrHistoryDataListActivity extends AppCompatActivity {
         cursor.close();
         return data;
     }
+
     private void deleteDataAll(){
         DocDataBaseHelper dbHelperdoc = new DocDataBaseHelper(ocrHistoryDataListActivity.this, "ocr_bp", null, 1);
         SQLiteDatabase dbdoc = dbHelperdoc.getWritableDatabase();
         dbdoc.execSQL("DELETE FROM bp");
+    }
+
+    private String[][] getAllData(){
+        int count = bpItems.size();
+        String[][] data = new String[count][8];
+        for(int i=0;i<count;i++)
+            data[i]=getData(i);
+        return data;
     }
 
     private Bitmap getBitmapFromUri(Uri uri)
