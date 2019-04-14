@@ -60,11 +60,16 @@ public class ocrHistoryDataListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("appTest:","开始绘制图像");
-                String[][] dataAll=getAllData();
+                String[] dataAll=getAllData();
                 Log.i("appTest:","获取数据数量："+dataAll.length);
-                for(int i=0;i<dataAll.length;i++)
-                    for(int j=0;j<dataAll[i].length;j++)
-                        Log.i("appTest:",j+":"+dataAll[i][j]);
+//                for(int i=0;i<dataAll.length;i++)
+//                    for(int j=0;j<dataAll[i].length;j++)
+//                        Log.i("appTest:",j+":"+dataAll[i][j]);
+
+                Intent chart_intent = new Intent(ocrHistoryDataListActivity.this,
+                        MultiLineChartActivity.class);
+                chart_intent.putExtra("data",dataAll);
+                startActivity(chart_intent);
             }
         });
 
@@ -128,11 +133,17 @@ public class ocrHistoryDataListActivity extends AppCompatActivity {
         dbdoc.execSQL("DELETE FROM bp");
     }
 
-    private String[][] getAllData(){
+    private String[] getAllData(){
         int count = bpItems.size();
-        String[][] data = new String[count][8];
-        for(int i=0;i<count;i++)
-            data[i]=getData(i);
+        String[] data = new String[count*4];
+        String[] temp = new String[4];
+        int dataCount=0;
+        for(int i=0;i<count;i++){
+            temp = getData(i);
+            for(int j=0;j<3;j++){
+                data[dataCount++]=temp[j+2];
+            }
+        }
         return data;
     }
 

@@ -87,6 +87,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".MultiLineChartActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
+
         <activity android:name=".docFullShow">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT"/>
