@@ -32,8 +32,8 @@ public class docOcrActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         text = intent.getStringExtra("text");
-        text = text.replaceAll(" ","");
-        text = text.replaceAll("\r|\n","");
+//        text = text.replaceAll(" ","");
+//        text = text.replaceAll("\r|\n","");
         bitmapUri = intent.getStringExtra("bitmap");
 
         Log.i("appTest:","获取的数据:\n"+text+"\n得到的图片uri:"+bitmapUri);

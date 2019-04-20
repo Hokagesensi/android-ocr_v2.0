@@ -19,19 +19,33 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.baidu.ocr.sdk.OCR;
+import com.baidu.ocr.sdk.OnResultListener;
+import com.baidu.ocr.sdk.exception.OCRError;
+import com.baidu.ocr.sdk.model.AccessToken;
+import com.baidu.ocr.sdk.model.GeneralBasicParams;
+import com.baidu.ocr.sdk.model.GeneralParams;
+import com.baidu.ocr.sdk.model.GeneralResult;
+import com.baidu.ocr.sdk.model.Word;
+import com.baidu.ocr.sdk.model.WordSimple;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 
+import org.json.JSONObject;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 
 public class CropTinyActivity extends AppCompatActivity{
@@ -51,10 +65,35 @@ public class CropTinyActivity extends AppCompatActivity{
     public String text;
     private int ocr_result_ok = 233;
     private int doc_result_ok = 777;
+    private boolean hasGotToken = false;
+    private boolean cropRes = false;
+    private StringBuffer sb = new StringBuffer();
+    /**
+     * 自定义license的文件路径和文件名称，以license文件方式初始化
+     */
+    private void initAccessTokenLicenseFile() {
+        if(!hasGotToken)
+        OCR.getInstance(CropTinyActivity.this).initAccessToken(new OnResultListener<AccessToken>() {
+            @Override
+            public void onResult(AccessToken accessToken) {
+                String token = accessToken.getAccessToken();
+                Log.i("appTest:百度云初始化token ",token);
+                hasGotToken = true;
+            }
+
+            @Override
+            public void onError(OCRError error) {
+                error.printStackTrace();
+                Log.i("appTest:自定义文件路径licence方式获取token失败", error.getMessage());
+            }
+        }, "aip.license", CropTinyActivity.this);
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_croptiny);
 
+        initAccessTokenLicenseFile();
         btn_ocr = findViewById(R.id.btn_ocr);
         btn_cut = findViewById(R.id.btn_cut);
         btn_back = findViewById(R.id.btn_back);
@@ -98,29 +137,50 @@ public class CropTinyActivity extends AppCompatActivity{
 //                    CropTinyActivity.this.finish();
             }
         });
-        //文本识别
+        //tesseract-ocr文本识别
+//        btn_DocOcr.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(!success) {
+//                    try {
+//                        initTessBaseAPI();
+//                    } catch (IOException ioe) {
+//                        ioe.printStackTrace();
+//                    }
+//                }
+//                text = recognizeTextImage(bitmap);
+//                Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
+////                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
+//
+//                Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
+//                doc_ocr_intent.putExtra("text",text);
+//                doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
+//                startActivityForResult(doc_ocr_intent,2);
+//            }
+//        });
+
         btn_DocOcr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!success) {
-                    try {
-                        initTessBaseAPI();
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
+                initAccessTokenLicenseFile();
+                if(hasGotToken==true) {
+                    baiduOcr();
+                    String text = sb.toString();
+                    Log.i("appTest:", "百度云识别结果：\n" + text);
+                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
+                    doc_ocr_intent.putExtra("text", text);
+                    doc_ocr_intent.putExtra("bitmap", finalBitmapUri.toString());
+                    startActivityForResult(doc_ocr_intent, 2);
+                    sb.delete(0,sb.length());
+                }else{
+                    Toast.makeText(CropTinyActivity.this,"百度云识别引擎未就绪，请打开数据网络",Toast.LENGTH_LONG);
                 }
-                text = recognizeTextImage(bitmap);
-                Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
-//                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
 
-                Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
-                doc_ocr_intent.putExtra("text",text);
-                doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
-                startActivityForResult(doc_ocr_intent,2);
             }
+
         });
 
-    }
+        }
 
     public int[] ocr(Bitmap bitmap){
         Log.i("appTest:","ocr bitmap size:"+bitmap.getHeight());
@@ -135,6 +195,39 @@ public class CropTinyActivity extends AppCompatActivity{
         }
         return number;
     }
+
+    public void baiduOcr(){
+            // 通用文字识别参数设置
+            GeneralParams param = new GeneralParams();
+            param.setDetectDirection(true);
+            String filepath = photoFile.getPath();
+            if (cropRes == true) {
+                filepath = UriTofilePath.getFilePathByUri(CropTinyActivity.this, finalBitmapUri);
+            }
+            param.setImageFile(new File(filepath));
+
+            // 调用通用文字识别服务
+            OCR.getInstance(CropTinyActivity.this).recognizeGeneral(param, new OnResultListener<GeneralResult>() {
+                @Override
+                public void onResult(GeneralResult result) {
+                    // 调用成功，返回GeneralResult对象
+                    for (WordSimple wordSimple : result.getWordList()) {
+                        // Word类包含位置信息
+                        Word word = (Word) wordSimple;
+                        sb.append(word.getWords());
+                        sb.append("\n");
+                    }
+                }
+
+                @Override
+                public void onError(OCRError error) {
+                    error.printStackTrace();
+                    Log.i("appTest:", "调用百度文字识别API失败！");
+                }
+            });
+    }
+
+
 
 
     /**
@@ -190,7 +283,7 @@ public class CropTinyActivity extends AppCompatActivity{
             Log.i("appTest:CropTinyActivity","bitmap size height:"
                     +bitmap.getHeight()+", width"+bitmap.getWidth());
             cropImageView.setImageBitmap(bitmap);
-
+            cropRes = true;
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
@@ -218,6 +311,26 @@ public class CropTinyActivity extends AppCompatActivity{
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**  
+     * 将Bitmap转换成文件
+      * 保存文件  
+      * @param bm  
+      * @param fileName  
+      * @throws IOException  
+      */
+    public static File saveFile(Bitmap bm,String path, String fileName) throws IOException {
+    File dirFile = new File(path);
+    if(!dirFile.exists()){
+        dirFile.mkdir();
+    }
+    File myCaptureFile = new File(path , fileName);
+    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+    bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+    bos.flush();
+    bos.close();
+    return myCaptureFile;
     }
 
     private void initTessBaseAPI() throws IOException {
