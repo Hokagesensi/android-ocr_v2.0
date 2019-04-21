@@ -67,6 +67,7 @@ public class CropTinyActivity extends AppCompatActivity{
     private int doc_result_ok = 777;
     private boolean hasGotToken = false;
     private boolean cropRes = false;
+    private boolean ocrRes = false;
     private StringBuffer sb = new StringBuffer();
     /**
      * 自定义license的文件路径和文件名称，以license文件方式初始化
@@ -84,6 +85,8 @@ public class CropTinyActivity extends AppCompatActivity{
             @Override
             public void onError(OCRError error) {
                 error.printStackTrace();
+                hasGotToken = false;
+                Toast.makeText(CropTinyActivity.this,"百度云初始化错误:"+error.getMessage(),Toast.LENGTH_LONG);
                 Log.i("appTest:自定义文件路径licence方式获取token失败", error.getMessage());
             }
         }, "aip.license", CropTinyActivity.this);
@@ -165,13 +168,6 @@ public class CropTinyActivity extends AppCompatActivity{
                 initAccessTokenLicenseFile();
                 if(hasGotToken==true) {
                     baiduOcr();
-                    String text = sb.toString();
-                    Log.i("appTest:", "百度云识别结果：\n" + text);
-                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
-                    doc_ocr_intent.putExtra("text", text);
-                    doc_ocr_intent.putExtra("bitmap", finalBitmapUri.toString());
-                    startActivityForResult(doc_ocr_intent, 2);
-                    sb.delete(0,sb.length());
                 }else{
                     Toast.makeText(CropTinyActivity.this,"百度云识别引擎未就绪，请打开数据网络",Toast.LENGTH_LONG);
                 }
@@ -205,7 +201,8 @@ public class CropTinyActivity extends AppCompatActivity{
                 filepath = UriTofilePath.getFilePathByUri(CropTinyActivity.this, finalBitmapUri);
             }
             param.setImageFile(new File(filepath));
-
+            sb.delete(0, sb.length());
+            ocrRes = false;
             // 调用通用文字识别服务
             OCR.getInstance(CropTinyActivity.this).recognizeGeneral(param, new OnResultListener<GeneralResult>() {
                 @Override
@@ -217,6 +214,14 @@ public class CropTinyActivity extends AppCompatActivity{
                         sb.append(word.getWords());
                         sb.append("\n");
                     }
+                    ocrRes = true;
+                    Log.i("appTest：","获取百度文字识别成功");
+                    String text = sb.toString();
+                    Log.i("appTest:", "百度云识别结果：\n" + text);
+                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
+                    doc_ocr_intent.putExtra("text", text);
+                    doc_ocr_intent.putExtra("bitmap", finalBitmapUri.toString());
+                    startActivityForResult(doc_ocr_intent, 2);
                 }
 
                 @Override
