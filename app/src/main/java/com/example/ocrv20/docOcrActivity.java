@@ -5,22 +5,25 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class docOcrActivity extends AppCompatActivity {
 
-    private EditText edit_text;
+    private TextView edit_text;
     private EditText edit_text_comment;
     private Button btn_doc_save;
 
     private String text;
     private String bitmapUri;
+    private String typeInfo;
     private int doc_result_ok = 777;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,14 +38,17 @@ public class docOcrActivity extends AppCompatActivity {
 //        text = text.replaceAll(" ","");
 //        text = text.replaceAll("\r|\n","");
         bitmapUri = intent.getStringExtra("bitmap");
+        typeInfo = intent.getStringExtra("typeInfo");
+
 
         Log.i("appTest:","获取的数据:\n"+text+"\n得到的图片uri:"+bitmapUri);
         edit_text.setText(text);
+        edit_text.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         btn_doc_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = edit_text.getText().toString();
+//                text = edit_text.getText().toString();
                 String comment = edit_text_comment.getText().toString();
                 String time = getTime();
                 ContentValues values = new ContentValues();
@@ -51,7 +57,7 @@ public class docOcrActivity extends AppCompatActivity {
                 values.put("bitmap",bitmapUri);
                 values.put("comment",comment);
                 values.put("time",time);
-                values.put("typeInfo","doc_ocr");
+                values.put("typeInfo",typeInfo);
 
                 DocDataBaseHelper dbHelper = new DocDataBaseHelper(docOcrActivity.this, "ocr_doc",null,1);
                 SQLiteDatabase db_doc = dbHelper.getWritableDatabase();

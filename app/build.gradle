@@ -51,4 +51,5 @@ dependencies {
     implementation 'com.rmtheis:tess-two:9.0.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation files('libs/ocr-sdk.jar')
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 }

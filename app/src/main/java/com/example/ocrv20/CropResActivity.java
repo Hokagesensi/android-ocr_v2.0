@@ -24,8 +24,9 @@ public class CropResActivity  extends AppCompatActivity {
 
         cropImageView = findViewById(R.id.cropImageView);
         bt_ocr = findViewById(R.id.btn_ocr);
-
-        photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
+        Intent intent = getIntent();
+        String filepath = intent.getStringExtra("filepath");
+        photoFile = new File(filepath);
         if(photoFile.exists()) {
             bitmap = BitmapFactory.decodeFile(photoFile.getPath());
             Log.i("appTest:cropResActivity","bitmap大小:"+bitmap.getWidth()+","+bitmap.getHeight());
@@ -38,6 +39,7 @@ public class CropResActivity  extends AppCompatActivity {
                 Log.i("appTest:","cropped size:height"+bitmap.getHeight()
                         +",width:"+bitmap.getWidth());
                 Intent intent = new Intent(CropResActivity.this,CropTinyActivity.class);
+                intent.putExtra("filepath",photoFile.toString());
                 startActivityForResult(intent,1);
             }
         });

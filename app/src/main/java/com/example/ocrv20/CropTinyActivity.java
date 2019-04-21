@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.icu.util.ChineseCalendar;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,47 +70,29 @@ public class CropTinyActivity extends AppCompatActivity{
     private boolean cropRes = false;
     private boolean ocrRes = false;
     private StringBuffer sb = new StringBuffer();
-    /**
-     * 自定义license的文件路径和文件名称，以license文件方式初始化
-     */
-    private void initAccessTokenLicenseFile() {
-        if(!hasGotToken)
-        OCR.getInstance(CropTinyActivity.this).initAccessToken(new OnResultListener<AccessToken>() {
-            @Override
-            public void onResult(AccessToken accessToken) {
-                String token = accessToken.getAccessToken();
-                Log.i("appTest:百度云初始化token ",token);
-                hasGotToken = true;
-            }
-
-            @Override
-            public void onError(OCRError error) {
-                error.printStackTrace();
-                hasGotToken = false;
-                Toast.makeText(CropTinyActivity.this,"百度云初始化错误:"+error.getMessage(),Toast.LENGTH_LONG);
-                Log.i("appTest:自定义文件路径licence方式获取token失败", error.getMessage());
-            }
-        }, "aip.license", CropTinyActivity.this);
-    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_croptiny);
 
         initAccessTokenLicenseFile();
+
         btn_ocr = findViewById(R.id.btn_ocr);
         btn_cut = findViewById(R.id.btn_cut);
         btn_back = findViewById(R.id.btn_back);
         btn_DocOcr = findViewById(R.id.btn_DocOcr);
         cropImageView = findViewById(R.id.imageCrop);
-
-        photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
+        Intent intent = getIntent();
+        String filepath = intent.getStringExtra("filepath");
+        photoFile = new File(filepath);
         finalBitmapUri = Uri.parse(photoFile.getPath());
         if(photoFile.exists()) {
             bitmap = BitmapFactory.decodeFile(photoFile.getPath());
             Log.i("appTest:cropTinyActivity","bitmap大小:"+bitmap.getWidth()+","+bitmap.getHeight());
             cropImageView.setImageBitmap(bitmap);
         }
+        //初始设置裁剪
+        startUCrop(CropTinyActivity.this,photoFile.toString(),UCrop.REQUEST_CROP,0,0);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,18 +148,42 @@ public class CropTinyActivity extends AppCompatActivity{
         btn_DocOcr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initAccessTokenLicenseFile();
+
                 if(hasGotToken==true) {
                     baiduOcr();
                 }else{
-                    Toast.makeText(CropTinyActivity.this,"百度云识别引擎未就绪，请打开数据网络",Toast.LENGTH_LONG);
-                }
 
+                    Toast.makeText(CropTinyActivity.this,"百度云识别引擎未就绪，请打开数据网络",Toast.LENGTH_LONG);
+                    initAccessTokenLicenseFile();
+                }
             }
 
         });
 
         }
+
+    /**
+     * 自定义license的文件路径和文件名称，以license文件方式初始化
+     */
+    private void initAccessTokenLicenseFile() {
+        if(!hasGotToken)
+            OCR.getInstance(CropTinyActivity.this).initAccessToken(new OnResultListener<AccessToken>() {
+                @Override
+                public void onResult(AccessToken accessToken) {
+                    String token = accessToken.getAccessToken();
+                    Log.i("appTest:百度云初始化token ",token);
+                    hasGotToken = true;
+                }
+
+                @Override
+                public void onError(OCRError error) {
+                    error.printStackTrace();
+                    hasGotToken = false;
+                    Toast.makeText(CropTinyActivity.this,"百度云初始化错误:"+error.getMessage(),Toast.LENGTH_LONG);
+                    Log.i("appTest:自定义文件路径licence方式获取token失败", error.getMessage());
+                }
+            }, "aip.license", CropTinyActivity.this);
+    }
 
     public int[] ocr(Bitmap bitmap){
         Log.i("appTest:","ocr bitmap size:"+bitmap.getHeight());
@@ -193,42 +200,55 @@ public class CropTinyActivity extends AppCompatActivity{
     }
 
     public void baiduOcr(){
-            // 通用文字识别参数设置
-            GeneralParams param = new GeneralParams();
-            param.setDetectDirection(true);
-            String filepath = photoFile.getPath();
-            if (cropRes == true) {
-                filepath = UriTofilePath.getFilePathByUri(CropTinyActivity.this, finalBitmapUri);
-            }
-            param.setImageFile(new File(filepath));
-            sb.delete(0, sb.length());
-            ocrRes = false;
-            // 调用通用文字识别服务
-            OCR.getInstance(CropTinyActivity.this).recognizeGeneral(param, new OnResultListener<GeneralResult>() {
-                @Override
-                public void onResult(GeneralResult result) {
-                    // 调用成功，返回GeneralResult对象
-                    for (WordSimple wordSimple : result.getWordList()) {
-                        // Word类包含位置信息
-                        Word word = (Word) wordSimple;
-                        sb.append(word.getWords());
-                        sb.append("\n");
-                    }
-                    ocrRes = true;
-                    Log.i("appTest：","获取百度文字识别成功");
-                    String text = sb.toString();
-                    Log.i("appTest:", "百度云识别结果：\n" + text);
-                    Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
-                    doc_ocr_intent.putExtra("text", text);
-                    doc_ocr_intent.putExtra("bitmap", finalBitmapUri.toString());
-                    startActivityForResult(doc_ocr_intent, 2);
-                }
 
-                @Override
-                public void onError(OCRError error) {
-                    error.printStackTrace();
-                    Log.i("appTest:", "调用百度文字识别API失败！");
+        // 通用文字识别参数设置
+        GeneralParams param = new GeneralParams();
+        param.setDetectDirection(true);
+        String filepath = photoFile.getPath();
+        sb.delete(0, sb.length());
+
+        //获取图片
+        if (cropRes == true) {
+            filepath = UriTofilePath.getFilePathByUri(CropTinyActivity.this, finalBitmapUri);
+        }
+        param.setImageFile(new File(filepath));
+
+        //设置processBar
+        ProgressBarUtil.showProgressBar(CropTinyActivity.this,"文字识别中...", Color.rgb(0,255,0));
+        ocrRes = false;
+        // 调用通用文字识别服务
+        OCR.getInstance(CropTinyActivity.this).recognizeGeneral(param, new OnResultListener<GeneralResult>() {
+            @Override
+            public void onResult(GeneralResult result) {
+                // 调用成功，返回GeneralResult对象
+                for (WordSimple wordSimple : result.getWordList()) {
+                    // Word类包含位置信息
+                    Word word = (Word) wordSimple;
+                    sb.append(word.getWords());
+                    sb.append("\n");
                 }
+                ocrRes = true;
+                //取消进度条显示
+                ProgressBarUtil.dissmissProgressBar();
+                Log.i("appTest：","获取百度文字识别成功");
+                String text = sb.toString();
+                Log.i("appTest:", "百度云识别结果：\n" + text);
+                //调转界面
+                Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
+                doc_ocr_intent.putExtra("text", text);
+                doc_ocr_intent.putExtra("bitmap", finalBitmapUri.toString());
+                if(cropRes==true)
+                    doc_ocr_intent.putExtra("typeInfo","Uri");
+                else
+                    doc_ocr_intent.putExtra("typeInfo","filePath");
+                startActivityForResult(doc_ocr_intent, 2);
+            }
+
+            @Override
+            public void onError(OCRError error) {
+                error.printStackTrace();
+                Log.i("appTest:", "调用百度文字识别API失败！");
+            }
             });
     }
 

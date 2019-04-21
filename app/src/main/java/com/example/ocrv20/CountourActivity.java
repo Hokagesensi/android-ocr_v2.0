@@ -65,7 +65,7 @@ public class CountourActivity extends AppCompatActivity {
         btnLeftSpain = findViewById(R.id.btn_LeftSpain);
         btnRightSpain = findViewById(R.id.btn_RightSpain);
 
-        photoFile = new File(getExternalFilesDir("img"), "scan.jpg");
+        photoFile = new File(getExternalFilesDir("img"), System.currentTimeMillis() + ".jpg");
 
         //获取Intent事件
         Intent last_intent = getIntent();
@@ -95,7 +95,7 @@ public class CountourActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setResult(RESULT_CANCELED);
-                finish();
+                CountourActivity.this.finish();
             }
         });
 
@@ -168,6 +168,7 @@ public class CountourActivity extends AppCompatActivity {
             fos.flush();
             fos.close();
             Intent intent = new Intent(CountourActivity.this,CropResActivity.class);
+            intent.putExtra("filepath",photoFile.toString());
             startActivityForResult(intent,1);
 //            CountourActivity.this.finish();
 
