@@ -74,7 +74,7 @@ public class docFullShow extends AppCompatActivity {
         btn_doc_cancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                docFullShow.this.finish();
+
             }
         });
     }

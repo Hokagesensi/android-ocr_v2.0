@@ -82,11 +82,11 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_doc_cancle"
+            android:id="@+id/btn_doc_extract"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="取消" />
+            android:text="提取" />
 
         <Button
             android:id="@+id/btn_doc_update"
