@@ -12,7 +12,10 @@ public class StrSplit {
             "可靠程度","主诉","现病史","既往史",
             "系统回顾","头颈五官","呼吸系統","循环系统",
             "造血系统","内分泌与代谢系统","肌肉骨骼系统","神经系统",
-            "精神状态","个人史","月经史","婚育史","家族史"};
+            "精神状态","个人史","月经史","婚育史",
+            "家族史","家庭地址","联系人","关系",
+            "联系人地址","电话号码","病史陈述者",
+            "身份证号码"};
     public static int keyWordsLength = keyWords.length;
 
     //分离文本
@@ -54,9 +57,9 @@ public class StrSplit {
     //获取关键词的位置
     public static int[] getIndex(String text) {
         //获取关键词的索引位置
-        int[] index = new int[keyWordsLength];
+        int[] index = new int[keyWords.length];
 
-        for(int i=0;i<keyWordsLength;i++)
+        for(int i=0;i<keyWords.length;i++)
             index[i] = text.indexOf(keyWords[i]);
         return index;
     }
@@ -77,7 +80,7 @@ public class StrSplit {
                 System.out.println(index[j]);
             }
         }
-        String[] sortedKeyWords = new String[count];
+
         sort(sortedIndex,0,sortedIndex.length-1);
         System.out.println("排序后的index:");
         for(int i=0;i<sortedIndex.length;i++)

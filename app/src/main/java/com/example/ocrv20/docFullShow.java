@@ -78,6 +78,7 @@ public class docFullShow extends AppCompatActivity {
             public void onClick(View v) {
                 String[] clauses = StrSplit.splitText(data[2]);
                 String[] keyWords = StrSplit.getKeyWords();
+
                 for(int i=0;i<clauses.length;i++) {
                     if(clauses[i]!=null)
                         Log.i(tag,keyWords[i]+": "+clauses[i]);
@@ -87,6 +88,7 @@ public class docFullShow extends AppCompatActivity {
 
             }
         });
+
     }
 
     private Bitmap getBitmapFromUri(Uri uri) {
