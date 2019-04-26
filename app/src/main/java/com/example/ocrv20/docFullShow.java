@@ -21,6 +21,7 @@ public class docFullShow extends AppCompatActivity {
     private EditText doc_edit_text;
     private EditText doc_edit_comment;
     private TextView doc_edit_time;
+    private String tag = "appTest";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_docshow);
@@ -34,7 +35,7 @@ public class docFullShow extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.ocr_fullImage);
         Button btn_doc_delete = findViewById(R.id.btn_doc_delete);
         Button btn_doc_update = findViewById(R.id.btn_doc_update);
-        Button btn_doc_cancle = findViewById(R.id.btn_doc_cancle);
+        Button btn_doc_extract = findViewById(R.id.btn_doc_extract);
         doc_edit_text = findViewById(R.id.doc_edit_text);
         doc_edit_comment = findViewById(R.id.doc_edit_comment);
         doc_edit_time = findViewById(R.id.doc_edit_time);
@@ -71,9 +72,18 @@ public class docFullShow extends AppCompatActivity {
             }
         });
 
-        btn_doc_cancle.setOnClickListener(new View.OnClickListener() {
+        //提取文本信息
+        btn_doc_extract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] clauses = StrSplit.splitText(data[2]);
+                String[] keyWords = StrSplit.getKeyWords();
+                for(int i=0;i<clauses.length;i++) {
+                    if(clauses[i]!=null)
+                        Log.i(tag,keyWords[i]+": "+clauses[i]);
+                    else
+                        Log.i(tag,keyWords[i]);
+                }
 
             }
         });
