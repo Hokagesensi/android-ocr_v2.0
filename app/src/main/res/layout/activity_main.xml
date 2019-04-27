@@ -27,6 +27,14 @@
             android:text="文档识别数据"
             android:id="@+id/btn_ocrData_main"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="病历识别结果"
+            android:id="@+id/btn_docData_main"/>
+
+
+
     </LinearLayout>
 
     <LinearLayout

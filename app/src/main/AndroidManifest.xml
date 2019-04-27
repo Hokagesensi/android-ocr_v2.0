@@ -102,6 +102,13 @@
                 <category android:name="android.intent.category.ALTERNATIVE"/>
             </intent-filter>
         </activity>
+        <activity android:name=".docExtractActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+
+                <category android:name="android.intent.category.ALTERNATIVE"/>
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

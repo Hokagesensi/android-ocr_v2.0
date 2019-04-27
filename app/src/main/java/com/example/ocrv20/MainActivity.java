@@ -68,32 +68,7 @@ public class MainActivity extends AppCompatActivity  {
         FloatingActionButton processBtn = this.findViewById(R.id.newCapture);
         Button btn_ocrData_main = findViewById(R.id.btn_bpData_main);
         Button btn_docData_main = findViewById(R.id.btn_ocrData_main);
-//        searchData();
-//        bpAdapter adapter = new bpAdapter(MainActivity.this,R.layout.bp_item,bpItems);
-//        listView=findViewById(R.id.listView);
-//        listView.setAdapter(adapter);
-
-
-//        //设置listView监听事件
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.i("appTest:","点击"+position);
-//                bpItem bpitem = bpItems.get(position);
-//                Log.i("appTest:","点击条目的详细内容为："+"typeInfo:"+
-//                        bpitem.getTypeinfo()+",time:"+bpitem.getTime());
-//
-////                data = getData(position);
-////                Log.i("appTest: ", "listView choose from database--->" + position + " "
-////                        + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " +
-////                        data[5] + " " + data[6]+" "+data[7]);
-////                Intent ocr_intent = new Intent();
-////                ocr_intent.setClass(MainActivity.this,ocrFullShow.class);
-////                ocr_intent.putExtra("data",data);
-////                ocr_intent.putExtra("index",position+1);
-////                startActivity(ocr_intent);
-//            }
-//        });
+        Button btn_caseData_main = findViewById(R.id.btn_docData_main);
 
 
         //设置按钮监听事件
@@ -123,6 +98,15 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 Intent doc_intent = new Intent(MainActivity.this,docHistoryDataListActivity.class);
                 startActivity(doc_intent);
+            }
+        });
+
+        //设置病历数据提取解果回放
+        btn_caseData_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent case_intent = new Intent(MainActivity.this,caseHistoryListActivity.class);
+                startActivity(case_intent);
             }
         });
 

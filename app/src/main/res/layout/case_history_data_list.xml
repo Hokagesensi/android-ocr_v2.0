@@ -5,11 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <ListView
+        android:id="@+id/case_data_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/doc_data_list">
+        android:layout_weight="1">
 
     </ListView>
 
@@ -20,7 +21,7 @@
         android:padding="10dp"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/btn_docDataListDeleteAll"
+            android:id="@+id/btn_caseDataListDeleteAll"
             android:text="清空"
             android:layout_width="0dp"
             android:layout_weight="1"

@@ -76,15 +76,13 @@ public class docFullShow extends AppCompatActivity {
         btn_doc_extract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] clauses = StrSplit.splitText(data[2]);
-                String[] keyWords = StrSplit.getKeyWords();
 
-                for(int i=0;i<clauses.length;i++) {
-                    if(clauses[i]!=null)
-                        Log.i(tag,keyWords[i]+": "+clauses[i]);
-                    else
-                        Log.i(tag,keyWords[i]);
-                }
+                Intent extract_intent = new Intent(docFullShow.this,docExtractActivity.class);
+                extract_intent.putExtra("text",data[2]);
+                startActivity(extract_intent);
+
+
+
 
             }
         });
