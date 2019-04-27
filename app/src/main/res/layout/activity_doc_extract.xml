@@ -31,6 +31,12 @@
             android:layout_weight="1"
             android:text="取消" />
         <Button
+            android:id="@+id/btn_extract_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="删除" />
+        <Button
             android:id="@+id/btn_extract_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

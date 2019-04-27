@@ -20,7 +20,6 @@ import java.util.List;
 public class ocrHistoryDataListActivity extends AppCompatActivity {
 
     private List<bpItem> bpItems = new ArrayList<bpItem>();
-    private List<bpData> bpDatas = new ArrayList<bpData>();
     private ListView listView;
     private Button btn_ocr_delete_all;
     private Button btn_ocr_plot;
