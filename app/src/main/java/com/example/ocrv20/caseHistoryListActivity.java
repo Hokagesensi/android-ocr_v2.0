@@ -36,7 +36,7 @@ public class caseHistoryListActivity extends AppCompatActivity {
                 Log.i(tag,"选中文件路径为："+filepath);
                 Intent caseExtract_intent = new Intent(caseHistoryListActivity.this,caseHistoryDataActivity.class);
                 caseExtract_intent.putExtra("filepath",filepath);
-                startActivity(caseExtract_intent);
+                startActivityForResult(caseExtract_intent,1);
             }
         });
 

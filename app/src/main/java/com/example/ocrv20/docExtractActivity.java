@@ -74,6 +74,7 @@ public class docExtractActivity extends AppCompatActivity {
                 String filename = time+".txt";
                 Log.i(tag,"text文本保存路径："+filepath+filename);
                 FileUtils.writeTxtToFile(text,filepath,filename);
+                docExtractActivity.this.finish();
             }
         });
 
