@@ -111,7 +111,14 @@ public class CropTinyActivity extends AppCompatActivity{
         btn_ocr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //设置processBar
+                ProgressBarUtil.showProgressBar(CropTinyActivity.this,"血压数据识别中...", Color.rgb(0,255,0));
+
                 int[] res = ocr(bitmap);
+
+                //取消进度条显示
+                ProgressBarUtil.dissmissProgressBar();
+
                 Log.i("appTest:","开始启动结果显示");
                 Intent intent = new Intent(CropTinyActivity.this,ocrResultActivity.class);
                 intent.putExtra("hp",String.valueOf(res[0]));
@@ -186,8 +193,10 @@ public class CropTinyActivity extends AppCompatActivity{
     }
 
     public int[] ocr(Bitmap bitmap){
+
+
         Log.i("appTest:","ocr bitmap size:"+bitmap.getHeight());
-        Mat img = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8UC4);
+        Mat img = new Mat(bitmap.getHeight(),bitmap.getWidth(), CvType.CV_8UC4);
         Utils.bitmapToMat(bitmap,img);
         Log.i("appTest:finalImgSize:","width:"+img.width()+",height:"+img.height());
         int[] number = ImgPreProcess.preprocess(img);
@@ -196,6 +205,8 @@ public class CropTinyActivity extends AppCompatActivity{
             if(number[i]!=0)
             Log.i("appTest:","第"+i+"行："+number[i]);
         }
+
+
         return number;
     }
 
