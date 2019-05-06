@@ -1,5 +1,7 @@
 package com.example.ocrv20;
 
+import android.util.Log;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -60,57 +62,40 @@ public class ImgPreProcess {
     public static int[] preprocess(Mat img){
 
         Mat dst1 = AdjustImgSize(img);
-        //灰度化阈值
+        //灰度化
         Imgproc.cvtColor(dst1, dst1, Imgproc.COLOR_RGB2GRAY);
+        //中值滤波
+        Imgproc.medianBlur(dst1, dst1, 11);
         //自适应阈值
         Imgproc.adaptiveThreshold(dst1, dst1,255,
                 Imgproc.ADAPTIVE_THRESH_MEAN_C,
-                Imgproc.THRESH_BINARY_INV, 39, 8);
-        //二值化像素取反
-        Imgreverse(dst1);
+                Imgproc.THRESH_BINARY, 39, 8);
         ocr.setFrameWhite(dst1, 5);
-        //中值滤波
-        Imgproc.medianBlur(img, img, 11);
         //形态学膨胀
         Mat kernel = Imgproc.getStructuringElement(
                 Imgproc.MORPH_RECT, new Size(5,10));
         Imgproc.erode(dst1, dst1, kernel);
+        Log.i("appTest:","图像预处理完成！");
 
         return ocrRes(dst1);
 
     }
 
 
-    /*
-     * 二值图像取反
-     * 输入：Mat图像
-     * 返回：无
-     * @author: madao
-     */
-    public static void Imgreverse(Mat img)
-    {
-        for(int i=0;i<img.height();i++)
-            for(int j=0;j<img.width();j++)
-            {
-                if(img.get(i, j)[0]==0.0)
-                    img.put(i, j, 255.0);
-                else
-                    img.put(i, j, 0);
-
-            }
-    }
-
     public static int[] ocrRes(Mat img){
         List<Mat> lines = new ArrayList<Mat>();
         List<Mat> words = new ArrayList<Mat>();
         List<Integer> res = new ArrayList<Integer>();
-        lines = ocr.cutImgX(img);
+        Log.i("appTest","开始文本分行！");
+;        lines = ocr.cutImgX(img);
         int count =0;
         int[] number = new int[6];
         int wordcount;
         for(Mat line : lines)
         {
             number[count]=0;
+            if(count==0)
+                Log.i("appTest","开始分割字符！");
             words = ocr.cutImgY(line);
             //滤除一行中不属于字符的图片
             for(Mat word : words)

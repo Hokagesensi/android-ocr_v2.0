@@ -112,12 +112,12 @@ public class CropTinyActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 //设置processBar
-                ProgressBarUtil.showProgressBar(CropTinyActivity.this,"血压数据识别中...", Color.rgb(0,255,0));
+//                ProgressBarUtil.showProgressBar(CropTinyActivity.this,"血压数据识别中...", Color.rgb(0,255,0));
 
                 int[] res = ocr(bitmap);
 
                 //取消进度条显示
-                ProgressBarUtil.dissmissProgressBar();
+//                ProgressBarUtil.dissmissProgressBar();
 
                 Log.i("appTest:","开始启动结果显示");
                 Intent intent = new Intent(CropTinyActivity.this,ocrResultActivity.class);
