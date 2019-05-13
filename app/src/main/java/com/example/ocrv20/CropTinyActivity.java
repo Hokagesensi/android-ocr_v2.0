@@ -155,7 +155,7 @@ public class CropTinyActivity extends AppCompatActivity{
         btn_DocOcr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                long startTime = System.currentTimeMillis(); // 获取开始时间
                 if(hasGotToken==true) {
                     baiduOcr();
                 }else{
@@ -163,6 +163,8 @@ public class CropTinyActivity extends AppCompatActivity{
                     Toast.makeText(CropTinyActivity.this,"百度云识别引擎未就绪，请打开数据网络",Toast.LENGTH_LONG);
                     initAccessTokenLicenseFile();
                 }
+                long endTime = System.currentTimeMillis(); // 获取结束时间
+                Log.i("appTest","代码运行时间："+(endTime-startTime)+"ms");
             }
 
         });

@@ -48,8 +48,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.github.pqpo:SmartCropper:v1.2.3'
     implementation 'com.github.yalantis:ucrop:2.2.2-native'
-    implementation 'com.rmtheis:tess-two:9.0.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation files('libs/ocr-sdk.jar')
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+    implementation 'com.rmtheis:tess-two:8.0.0'
 }

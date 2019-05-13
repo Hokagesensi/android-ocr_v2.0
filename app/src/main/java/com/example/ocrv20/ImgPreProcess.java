@@ -94,8 +94,7 @@ public class ImgPreProcess {
         for(Mat line : lines)
         {
             number[count]=0;
-            if(count==0)
-                Log.i("appTest","开始分割字符！");
+            Log.i("appTest","开始分割第"+count+"字符！");
             words = ocr.cutImgY(line);
             //滤除一行中不属于字符的图片
             for(Mat word : words)
