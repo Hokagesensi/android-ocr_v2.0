@@ -130,27 +130,34 @@ public class CropTinyActivity extends AppCompatActivity{
 //                    CropTinyActivity.this.finish();
             }
         });
+
         //tesseract-ocr文本识别
 //        btn_DocOcr.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(!success) {
-//                    try {
-//                        initTessBaseAPI();
-//                    } catch (IOException ioe) {
-//                        ioe.printStackTrace();
-//                    }
-//                }
-//                text = recognizeTextImage(bitmap);
-//                Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
-////                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
-//
-//                Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
-//                doc_ocr_intent.putExtra("text",text);
-//                doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
-//                startActivityForResult(doc_ocr_intent,2);
-//            }
-//        });
+////            @Override
+////            public void onClick(View v) {
+////
+////                if(!success) {
+////                    try {
+////                        initTessBaseAPI();
+////                    } catch (IOException ioe) {
+////                        ioe.printStackTrace();
+////                    }
+////                }
+////                text = recognizeTextImage(bitmap);
+////
+////                Log.i("appTest:CropTinyActivity","识别结果：\n"+text);
+//////                    Toast.makeText(CropTinyActivity.this,text,Toast.LENGTH_LONG).show();
+////
+////                Intent doc_ocr_intent = new Intent(CropTinyActivity.this,docOcrActivity.class);
+////                doc_ocr_intent.putExtra("text",text);
+////                doc_ocr_intent.putExtra("bitmap",finalBitmapUri.toString());
+////                if(cropRes==true)
+////                    doc_ocr_intent.putExtra("typeInfo","Uri");
+////                else
+////                    doc_ocr_intent.putExtra("typeInfo","filePath");
+////                startActivityForResult(doc_ocr_intent, 2);
+////            }
+////        });
 
         btn_DocOcr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,6 +253,7 @@ public class CropTinyActivity extends AppCompatActivity{
                 Log.i("appTest：","获取百度文字识别成功");
                 String text = sb.toString();
                 Log.i("appTest:", "百度云识别结果：\n" + text);
+                Log.i("appTest","识别结果字数："+text.length());
                 //调转界面
                 Intent doc_ocr_intent = new Intent(CropTinyActivity.this, docOcrActivity.class);
                 doc_ocr_intent.putExtra("text", text);
@@ -399,8 +407,13 @@ public class CropTinyActivity extends AppCompatActivity{
     private  String recognizeTextImage(Bitmap img){
 //        Resources r = CropTinyActivity.this.getResources();
 //        Bitmap img2 = BitmapFactory.decodeResource(r,R.drawable.apptest01);
+        long startTime = System.currentTimeMillis(); // 获取开始时间
+
         baseApi.setImage(img);
         String recognizeText = baseApi.getUTF8Text();
+
+        long endTime = System.currentTimeMillis(); // 获取结束时间
+        Log.i("appTest","代码运行时间："+(endTime-startTime)+"ms");
         return recognizeText;
     }
 
